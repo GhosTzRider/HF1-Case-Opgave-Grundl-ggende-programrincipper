@@ -68,32 +68,32 @@ class PluklisteProgram
 
             //Print options - Interaktivt interface i konsollen
             Console.WriteLine("\n\nOptions:");
-            ColoredLetters.WriteLinesWithRedLetter("Quit", 'Q'); // Metode der skriver "Aflut plukseddel" med grønt begyndelsesbogstav
+            ColoredLetters.WriteLinesWithRedLetter("Quit", 'Q'); // Quit skrives i rød, fordi det indikerer man afslutter programmet
             if (index >= 0)
             {
-                ColoredLetters.WriteLinesWithGreenLetter("Afslut plukseddel", 'A'); // Metode der skriver "Afslut plukseddel" med grønt begyndelsesbogstav
+                ColoredLetters.WriteLinesWithGreenLetter("Afslut plukseddel", 'A'); // Kalder metoderne for at skrive linjen med grønt begyndelsesbogstav
             }
             if (index > 0)
             {
-                ColoredLetters.WriteLinesWithGreenLetter("Forrige plukseddel", 'F'); // Metode der skriver "Forrige plukseddel" med grønt begyndelsesbogstav
+                ColoredLetters.WriteLinesWithGreenLetter("Forrige plukseddel", 'F'); 
             }
             if (index < files.Count - 1)
             {
-                ColoredLetters.WriteLinesWithGreenLetter("Næste plukseddel", 'N'); // Metode der skriver "Næste plukseddel" med grønt begyndelsesbogstav
+                ColoredLetters.WriteLinesWithGreenLetter("Næste plukseddel", 'N'); 
             }
-            ColoredLetters.WriteLinesWithGreenLetter("Genindlæs pluklister", 'G'); // Metode der skriver "Genindlæs pluklister" med grønt begyndelsesbogstav
+            ColoredLetters.WriteLinesWithGreenLetter("Genindlæs pluklister", 'G'); 
 
             readKey = Console.ReadKey().KeyChar;
             if (readKey >= 'a') readKey -= (char)('a' - 'A'); //HACK: To upper - Kan man ikke bare bruge .ToUpper ?
             Console.Clear();
 
-            Console.ForegroundColor = ConsoleColor.Red; //status in red
+            
             switch (readKey)    // switch kigger på hvilke taster der er trykket på og eksekverer en kommando ud fra det indtastede bogstav
             {
                 case 'G':
                     files = Directory.EnumerateFiles("export").ToList();
                     index = -1;
-                    Console.WriteLine("Pluklister genindlæst");
+                    ColoredLetters.WriteLinesOnlyInRed("Pluklister genindlæst.");
                     break;
                 case 'F':
                     if (index > 0) index--;
@@ -110,7 +110,7 @@ class PluklisteProgram
                     if (index == files.Count) index--;
                     break;
             }
-            Console.ResetColor(); //reset color
+            
         }
     }
 }
