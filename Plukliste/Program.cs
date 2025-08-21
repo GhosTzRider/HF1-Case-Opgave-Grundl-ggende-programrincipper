@@ -15,6 +15,7 @@ class PluklisteProgram
 
         if (!Directory.Exists("export"))
         {
+            Console.WriteLine(Directory.GetCurrentDirectory());
             Console.WriteLine("Directory \"export\" not found");        // Kigger på om export directory *ikke* findes?
             Console.ReadLine();
             return;
