@@ -56,7 +56,7 @@ class PluklisteProgram
                     }
                 }
                 file.Close();
-            }
+            } // test
 
             //Print options
             Console.WriteLine("\n\nOptions:");
