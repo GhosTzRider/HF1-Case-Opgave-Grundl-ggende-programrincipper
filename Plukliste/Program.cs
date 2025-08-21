@@ -84,7 +84,7 @@ class PluklisteProgram
             ColoredLetters.WriteLinesWithGreenLetter("Genindlæs pluklister", 'G'); 
 
             readKey = Console.ReadKey().KeyChar;
-            if (readKey >= 'a') readKey -= (char)('a' - 'A'); //HACK: To upper - Kan man ikke bare bruge .ToUpper ?
+            if (readKey >= 'a') readKey -= (char)('a' - 'A'); //HACK: To upper 
             Console.Clear();
 
             
