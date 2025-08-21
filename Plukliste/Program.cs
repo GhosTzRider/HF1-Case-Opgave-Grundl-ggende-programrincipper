@@ -4,13 +4,21 @@ namespace Plukliste;
 class PluklisteProgram
 {
 
-    static void Main()      // Alt kører i main - Skal ud i nogle klasser med underliggende metoder... op et tidspunkt
+    static void Main()
     {
+        InitializePlukliste();
+
+    }
+
+    static void InitializePlukliste()
+    {
+
         //Arrange
-        char readKey = ' ';     // Istedet for char bruger vi ReadLine () til at læse input
+        char readKey = ' ';
         List<string> files;     // nye filer defineres som en string-list
         var index = -1;         // index starter på -1
-        var standardColor = Console.ForegroundColor;
+        
+
         Directory.CreateDirectory("import");    // Starter med at lave et directory "import" - overskriver den gammel import?
 
         if (!Directory.Exists("export"))
@@ -60,35 +68,20 @@ class PluklisteProgram
 
             //Print options - Interaktivt interface i konsollen
             Console.WriteLine("\n\nOptions:");
-            Console.ForegroundColor = ConsoleColor.Green;       // hvert forbogstav er farvet grønt - kan kodes bedre
-            Console.Write("Q");
-            Console.ForegroundColor = standardColor;
-            Console.WriteLine("uit");
+            ColoredLetters.WriteLinesWithRedLetter("Quit", 'Q'); // Metode der skriver "Aflut plukseddel" med grønt begyndelsesbogstav
             if (index >= 0)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("A");
-                Console.ForegroundColor = standardColor;
-                Console.WriteLine("fslut plukseddel");
+                ColoredLetters.WriteLinesWithGreenLetter("Afslut plukseddel", 'A'); // Metode der skriver "Afslut plukseddel" med grønt begyndelsesbogstav
             }
             if (index > 0)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("F");
-                Console.ForegroundColor = standardColor;
-                Console.WriteLine("orrige plukseddel");
+                ColoredLetters.WriteLinesWithGreenLetter("Forrige plukseddel", 'F'); // Metode der skriver "Forrige plukseddel" med grønt begyndelsesbogstav
             }
             if (index < files.Count - 1)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("N");
-                Console.ForegroundColor = standardColor;
-                Console.WriteLine("æste plukseddel");
+                ColoredLetters.WriteLinesWithGreenLetter("Næste plukseddel", 'N'); // Metode der skriver "Næste plukseddel" med grønt begyndelsesbogstav
             }
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("G");
-            Console.ForegroundColor = standardColor;
-            Console.WriteLine("enindlæs pluksedler");
+            ColoredLetters.WriteLinesWithGreenLetter("Genindlæs pluklister", 'G'); // Metode der skriver "Genindlæs pluklister" med grønt begyndelsesbogstav
 
             readKey = Console.ReadKey().KeyChar;
             if (readKey >= 'a') readKey -= (char)('a' - 'A'); //HACK: To upper - Kan man ikke bare bruge .ToUpper ?
@@ -100,7 +93,7 @@ class PluklisteProgram
                 case 'G':
                     files = Directory.EnumerateFiles("export").ToList();
                     index = -1;
-                    Console.WriteLine("Pluklister genindlæst"); 
+                    Console.WriteLine("Pluklister genindlæst");
                     break;
                 case 'F':
                     if (index > 0) index--;
@@ -117,8 +110,7 @@ class PluklisteProgram
                     if (index == files.Count) index--;
                     break;
             }
-            Console.ForegroundColor = standardColor; //reset color
-
+            Console.ResetColor(); //reset color
         }
     }
 }
