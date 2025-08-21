@@ -11,7 +11,7 @@ class PluklisteProgram
         List<string> files;     // nye filer defineres som en string-list
         var index = -1;         // index starter på -1
         var standardColor = Console.ForegroundColor;
-        Directory.CreateDirectory("import");    // Starter med at lave et directory "import" - men hvor? sti mangler
+        Directory.CreateDirectory("import");    // Starter med at lave et directory "import" - overskriver den gammel import?
 
         if (!Directory.Exists("export"))
         {
@@ -37,30 +37,30 @@ class PluklisteProgram
                 Console.WriteLine($"\nfile: {files[index]}");
 
                 //read file
-                FileStream file = File.OpenRead(files[index]);
-                System.Xml.Serialization.XmlSerializer xmlSerializer =
-                    new System.Xml.Serialization.XmlSerializer(typeof(Pluklist));
-                var plukliste = (Pluklist?)xmlSerializer.Deserialize(file);
+                FileStream file = File.OpenRead(files[index]);                      // Læser filen som et index?
+                System.Xml.Serialization.XmlSerializer xmlSerializer =              // Serializer XML-filen
+                    new System.Xml.Serialization.XmlSerializer(typeof(Pluklist));   // Laver en ny klasse Pluklist 
+                var plukliste = (Pluklist?)xmlSerializer.Deserialize(file);         // Definerer pluklisten som en deserialized fil fra ordren i XML-format
 
                 //print plukliste
                 if (plukliste != null && plukliste.Lines != null)
                 {
-                    Console.WriteLine("\n{0, -13}{1}", "Name:", plukliste.Name);
+                    Console.WriteLine("\n{0, -13}{1}", "Name:", plukliste.Name);        // Kigger inde i hver .XML fil for at liste eks. Navn og forsendelse
                     Console.WriteLine("{0, -13}{1}", "Forsendelse:", plukliste.Forsendelse);
                     //TODO: Add adresse to screen print
 
-                    Console.WriteLine("\n{0,-7}{1,-9}{2,-20}{3}", "Antal", "Type", "Produktnr.", "Navn");
+                    Console.WriteLine("\n{0,-7}{1,-9}{2,-20}{3}", "Antal", "Type", "Produktnr.", "Navn"); 
                     foreach (var item in plukliste.Lines)
                     {
-                        Console.WriteLine("{0,-7}{1,-9}{2,-20}{3}", item.Amount, item.Type, item.ProductID, item.Title);
+                        Console.WriteLine("{0,-7}{1,-9}{2,-20}{3}", item.Amount, item.Type, item.ProductID, item.Title);        // Spytter en linje ud for hver linje af items i pluklisten
                     }
                 }
-                file.Close();
+                file.Close();       // Og lukker når den er done
             }
 
-            //Print options
+            //Print options - Interaktivt interface i konsollen
             Console.WriteLine("\n\nOptions:");
-            Console.ForegroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = ConsoleColor.Green;       // hvert forbogstav er farvet grønt - kan kodes bedre
             Console.Write("Q");
             Console.ForegroundColor = standardColor;
             Console.WriteLine("uit");
@@ -91,7 +91,7 @@ class PluklisteProgram
             Console.WriteLine("enindlæs pluksedler");
 
             readKey = Console.ReadKey().KeyChar;
-            if (readKey >= 'a') readKey -= (char)('a' - 'A'); //HACK: To upper
+            if (readKey >= 'a') readKey -= (char)('a' - 'A'); //HACK: To upper - Kan man ikke bare bruge .ToUpper ?
             Console.Clear();
 
             Console.ForegroundColor = ConsoleColor.Red; //status in red
