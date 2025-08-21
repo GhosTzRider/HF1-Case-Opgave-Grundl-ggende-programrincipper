@@ -1,20 +1,21 @@
 ﻿//Eksempel på funktionel kodning hvor der kun bliver brugt et model lag
 namespace Plukliste;
 
-class PluklisteProgram { 
+class PluklisteProgram
+{
 
-    static void Main()
+    static void Main()      // Alt kører i main - Skal ud i nogle klasser med underliggende metoder... op et tidspunkt
     {
         //Arrange
-        char readKey = ' ';
-        List<string> files;
-        var index = -1;
+        char readKey = ' ';     // Istedet for char bruger vi ReadLine () til at læse input
+        List<string> files;     // nye filer defineres som en string-list
+        var index = -1;         // index starter på -1
         var standardColor = Console.ForegroundColor;
-        Directory.CreateDirectory("import");
+        Directory.CreateDirectory("import");    // Starter med at lave et directory "import" - men hvor? sti mangler
 
         if (!Directory.Exists("export"))
         {
-            Console.WriteLine("Directory \"export\" not found");
+            Console.WriteLine("Directory \"export\" not found");        // Kigger på om export directory *ikke* findes?
             Console.ReadLine();
             return;
         }
