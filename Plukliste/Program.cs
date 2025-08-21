@@ -55,7 +55,7 @@ class PluklisteProgram
                         Console.WriteLine("{0,-7}{1,-9}{2,-20}{3}", item.Amount, item.Type, item.ProductID, item.Title);        // Spytter en linje ud for hver item i pluklisten
                     }
                 }
-                file.Close();       // Og lukker når den er done
+                file.Close();       // Og lukker når den er done 
             }
 
             //Print options - Interaktivt interface i konsollen
