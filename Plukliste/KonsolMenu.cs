@@ -56,6 +56,7 @@ namespace Plukliste
                     }
                     file.Close();       // Og lukker når den er done
                 }
+                HTMLReader.FindMatchingProductIDs(files[index]);
 
                 //Print options - Interaktivt interface i konsollen
                 Console.WriteLine("\n\nOptions:");
@@ -115,6 +116,6 @@ namespace Plukliste
                         break;
                 }
             }
-        }
+        }        
     }
 }

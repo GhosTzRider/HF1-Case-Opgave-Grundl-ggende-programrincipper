@@ -6,9 +6,14 @@ namespace Plukliste
 {
     internal partial class HTMLReader
     {
-        public static string ReadHTMLFile(string filePath)
+        public static List<string> FindMatchingProductIDs(string xmlFilePath)
         {
-            try
+            var matches = new List<string>();
+            var validProductIDs = new HashSet<string> { "PRINT-WELCOME", "PRINT-OPGRADE", "PRINT-OPSIGELSE" };
+
+            using var file = File.OpenRead(xmlFilePath);
+            var xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(Pluklist));
+            if (xmlSerializer.Deserialize(file) is Pluklist plukliste && plukliste.Lines != null)
             {
                 return File.ReadAllText(filePath);
             }
@@ -19,30 +24,16 @@ namespace Plukliste
             }
         }
 
-        public static string ReplaceTagsInHTML(Pluklist plukliste, string templateType)
+        public static string? GetTemplateForProduct(string productId)
         {
-            string PList = "<ul>";   // Starter med en ul liste
-            foreach (var item in plukliste.Lines)
-            {
-                PList += $"<li>{item.Amount} | {item.Title}</li> ";
-            }
-            PList += "</ul>";        // og afslutter med en ul liste
-            string content = string.Empty;      // Starter med en tom streng
-            try
-            {
-                using (StreamReader reader = new StreamReader($"templates\\{templateType}.html"))
-                {
-                    content = reader.ReadToEnd();       // forsøger at læse indholdet af HTML-filerne i templates mappen
-                }
-                content = content.Replace("[Name]", plukliste.Name)             // og erstatte tags i HTML-filen med værdier fra pluklisten
-                                 .Replace("[Adresse]", plukliste.Adresse)
-                                 .Replace("[Plukliste]", PList);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error replacing tags in HTML: {ex.Message}");   // hvis en værdi ikke findes i pluklisten, fanges undtagelsen og en fejlmeddelelse vises
-            }
-            return content;
+            if (productId.Contains("Print-welcome", StringComparison.OrdinalIgnoreCase))
+                return "templates/PRINT-WELCOME.html";
+            if (productId.Contains("Print-upgrade", StringComparison.OrdinalIgnoreCase))
+                return "templates/PRINT-UPGRADE.html";
+            if (productId.Contains("Print-opsigelse", StringComparison.OrdinalIgnoreCase))
+                return "templates/PRINT-OPSIGELSE.html";
+            // Add more mappings as needed
+            return null;
         }
 
     }
