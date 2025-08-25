@@ -74,7 +74,6 @@ namespace Plukliste
                 if (readKey >= 'a') readKey -= (char)('a' - 'A'); //HACK: To upper 
                 Console.Clear();
 
-
                 switch (readKey)    // switch kigger på hvilke taster der er trykket på og eksekverer en kommando ud fra det indtastede bogstav
                 {
                     case 'G':
