@@ -6,8 +6,8 @@ class PluklisteProgram
 
     static void Main()
     {
-
         
+
         Directory.CreateDirectory("import");    // Starter med at lave et directory "import" - overskriver den gammel import?
 
         if (!Directory.Exists("export"))
@@ -18,7 +18,7 @@ class PluklisteProgram
         }
 
         KonsolMenu.KonsolMenuMethod();
-        //Arrange
+        
     }
 }
 

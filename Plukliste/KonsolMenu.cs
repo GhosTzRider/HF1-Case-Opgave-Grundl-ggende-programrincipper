@@ -15,6 +15,8 @@ namespace Plukliste
             var index = -1;         // index starter på -1
 
             files = Directory.EnumerateFiles("export").ToList();        // Lister directory "export" og laver en liste af alle filerne i den mappe
+            var plukliste = new Pluklist();
+            string templateType = string.Empty;
 
             //ACT
             while (readKey != 'Q')      // Så længe readKey ikke er 'Q' (quit) så fortsæt
@@ -35,19 +37,21 @@ namespace Plukliste
                     FileStream file = File.OpenRead(files[index]);                      // Læser filen som et index?
                     System.Xml.Serialization.XmlSerializer xmlSerializer =              // Serializer XML-filen
                         new System.Xml.Serialization.XmlSerializer(typeof(Pluklist));   // Laver en ny klasse Pluklist 
-                    var plukliste = (Pluklist?)xmlSerializer.Deserialize(file);         // Definerer pluklisten som en deserialized fil fra ordren i XML-format
+                    plukliste = (Pluklist?)xmlSerializer.Deserialize(file);         // Definerer pluklisten som en deserialized fil fra ordren i XML-format
+                   
 
                     //print plukliste
                     if (plukliste != null && plukliste.Lines != null)
                     {
                         Console.WriteLine("\n{0, -13}{1}", "Name:", plukliste.Name);        // Print navn på pluklisten
                         Console.WriteLine("{0, -13}{1}", "Forsendelse:", plukliste.Forsendelse);    // Print forsendelse på pluklisten
-                                                                                                    //TODO: Add adresse to screen print
+                        Console.WriteLine("{0, -13}{1}", "Adresse:", plukliste.Adresse);        // Print adresse på pluklisten                                                                            
 
                         Console.WriteLine("\n{0,-7}{1,-9}{2,-20}{3}", "Antal", "Type", "Produktnr.", "Navn");   // Print overskrifter for pluklisten
                         foreach (var item in plukliste.Lines)
                         {
                             Console.WriteLine("{0,-7}{1,-9}{2,-20}{3}", item.Amount, item.Type, item.ProductID, item.Title);        // Spytter en linje ud for hver item i pluklisten
+                            if (item.Type == ItemType.Print) templateType = item.ProductID;   // Hvis item typen er fysisk, så sæt templateType til "Fysisk", ellers sæt den til "Print"
                         }
                     }
                     file.Close();       // Og lukker når den er done
@@ -91,10 +95,19 @@ namespace Plukliste
                         //Move files to import directory
                         var filewithoutPath = files[index].Substring(files[index].LastIndexOf('\\'));
                         var destPath = string.Format(@"import\\{0}", filewithoutPath);
+
+                        string html = HTMLReader.ReplaceTagsInHTML(plukliste, templateType);// kalder på metoden for at erstatte tags i HTML-filen med værdier fra pluklisten                        
+                        string HtmlFileName = filewithoutPath.Replace(".XML", ".HTML");
+                        Directory.CreateDirectory("print");
+                        StreamWriter writer = new StreamWriter($"print\\{HtmlFileName}"); // Definerer en ny HTML-fil i import-mappen med navnet på forsendelsen og templateType
+                        writer.Write(html); // Skriver indholdet til HTML-filen ved at kalde på metoden ReplaceTagsInHTML
+                        writer.Flush();
+
                         if (File.Exists(destPath))
                         {
-                            File.Delete(destPath); // or handle as needed
+                            File.Delete(destPath); 
                         }
+
                         File.Move(files[index], destPath);
                         Console.WriteLine($"Plukseddel {files[index]} afsluttet.");
                         files.Remove(files[index]);
