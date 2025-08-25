@@ -15,7 +15,7 @@ namespace Plukliste
             Console.ForegroundColor = ConsoleColor.Green; // Sætter farven til rød
             Console.Write(letters[o]);
             Console.ResetColor(); // Nulstiller farven til standard
-            Console.WriteLine(letters.Substring(o + 1));
+            Console.WriteLine(letters[(o + 1)..]);
         }
 
         public static void WriteLinesWithRedLetter(string letters, char c) // Metode for rødt begyndelsesbogstav
@@ -25,9 +25,15 @@ namespace Plukliste
             Console.ForegroundColor = ConsoleColor.Red; // Sætter farven til rød
             Console.Write(letters[o]);
             Console.ResetColor(); // Nulstiller farven til standard
-            Console.WriteLine(letters.Substring(o + 1));
+            Console.WriteLine(letters[(o + 1)..]);
         }
 
+        public static void WriteLinesOnlyInRed(string letters) // Metode for at skrive linje i rød
+        {
+            Console.ForegroundColor = ConsoleColor.Red; // Sætter farven til rød
+            Console.WriteLine(letters);
+            Console.ResetColor(); // Nulstiller farven til standard
+        }
 
     }
 }
