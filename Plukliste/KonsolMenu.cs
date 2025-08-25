@@ -55,8 +55,7 @@ namespace Plukliste
                         }
                     }
                     file.Close();       // Og lukker når den er done
-                }
-                HTMLReader.FindMatchingProductIDs(files[index]);
+                }               
 
                 //Print options - Interaktivt interface i konsollen
                 Console.WriteLine("\n\nOptions:");
@@ -94,24 +93,24 @@ namespace Plukliste
                         break;
                     case 'A':
                         //Move files to import directory
-                        var filewithoutPath = files[index].Substring(files[index].LastIndexOf('\\'));
-                        var destPath = string.Format(@"import\\{0}", filewithoutPath);
+                        var filewithoutPath = files[index].Substring(files[index].LastIndexOf('\\'));   // Fjerner stien fra filnavnet, så kun selve filnavnet er tilbage
+                        var destPath = string.Format(@"import\\{0}", filewithoutPath);                  // Definerer en ny streng som er stien til import-mappen med filnavnet
 
-                        string html = HTMLReader.ReplaceTagsInHTML(plukliste, templateType);// kalder på metoden for at erstatte tags i HTML-filen med værdier fra pluklisten                        
-                        string HtmlFileName = filewithoutPath.Replace(".XML", ".HTML");
-                        Directory.CreateDirectory("print");
-                        StreamWriter writer = new StreamWriter($"print\\{HtmlFileName}"); // Definerer en ny HTML-fil i import-mappen med navnet på forsendelsen og templateType
-                        writer.Write(html); // Skriver indholdet til HTML-filen ved at kalde på metoden ReplaceTagsInHTML
-                        writer.Flush();
+                        string html = HTMLReader.ReplaceTagsInHTML(plukliste, templateType);    // kalder på metoden for at erstatte tags i HTML-filen med værdier fra pluklisten                        
+                        string HtmlFileName = filewithoutPath.Replace(".XML", ".HTML");         // Definerer ny streng som er navnet på forsendelsen med filtypen .html
+                        Directory.CreateDirectory("print");                                     // Laver en mappe der hedder print, hvis den ikke findes
+                        StreamWriter writer = new StreamWriter($"print\\{HtmlFileName}");       // Definerer en ny HTML-fil i import-mappen med navnet på forsendelsen og templateType
+                        writer.Write(html);                                                     // Skriver indholdet til HTML-filen ved at kalde på metoden ReplaceTagsInHTML
+                        writer.Flush();                                                         // Flusher writeren
 
                         if (File.Exists(destPath))
                         {
-                            File.Delete(destPath); 
+                            File.Delete(destPath);  // Sletter filen i import-mappen hvis den allerede findes for at ungdå fejl
                         }
 
-                        File.Move(files[index], destPath);
-                        Console.WriteLine($"Plukseddel {files[index]} afsluttet.");
-                        files.Remove(files[index]);
+                        File.Move(files[index], destPath);                                      // Flytter filen til import-mappen
+                        Console.WriteLine($"Plukseddel {files[index]} afsluttet.");             // Skriver i konsollen at pluksedlen er afsluttet
+                        files.Remove(files[index]);             
                         if (index == files.Count) index--;
                         break;
                 }
