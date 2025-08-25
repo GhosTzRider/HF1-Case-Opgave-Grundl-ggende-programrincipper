@@ -1,33 +1,31 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Plukliste
 {
     internal class HTMLReader
     {
-        public static string ReadHTMLFile(string filePath)
+        public static List<string> FindMatchingProductIDs(string xmlFilePath)
         {
-            try
-            {
-                return File.ReadAllText(filePath);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error reading HTML file: {ex.Message}");
-                return string.Empty;
-            }
-        }
+            var matches = new List<string>();
+            var validProductIDs = new HashSet<string> { "PRINT-WELCOME", "PRINT-OPGRADE", "PRINT-OPSIGELSE" };
 
-        public static string? GetTemplateForProduct(string productId)
-        {
-            if (productId.Contains("Print-welcome", StringComparison.OrdinalIgnoreCase))
-                return "templates/PRINT-WELCOME.html";
-            if (productId.Contains("Print-upgrade", StringComparison.OrdinalIgnoreCase))
-                return "templates/PRINT-UPGRADE.html";
-            if (productId.Contains("Print-opsigelse", StringComparison.OrdinalIgnoreCase))
-                return "templates/PRINT-OPSIGELSE.html";
-            // Add more mappings as needed
-            return null;
+            using var file = File.OpenRead(xmlFilePath);
+            var xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(Pluklist));
+            if (xmlSerializer.Deserialize(file) is Pluklist plukliste && plukliste.Lines != null)
+            {
+                foreach (var item in plukliste.Lines)
+                {
+                    if (validProductIDs.Contains(item.ProductID))
+                    {
+                        Console.WriteLine($"this product contains {item.ProductID}");
+                        matches.Add(item.ProductID);
+                    }
+                }
+            }
+            return matches;
         }
     }
 }
