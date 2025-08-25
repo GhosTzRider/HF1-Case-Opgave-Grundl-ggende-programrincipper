@@ -17,15 +17,6 @@ class PluklisteProgram
 
         KonsolMenu.KonsolMenuMethod();
         //Arrange
-
-
-
-
-
-                    
-
-
-
     }
 }
 
