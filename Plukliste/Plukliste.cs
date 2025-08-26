@@ -18,7 +18,7 @@ public class Item
 
 public enum ItemType        /// og itemtypen kan være en af følgende:
 {
-    Fysisk, Print
+    Fysisk, Print, Pickup
 }
 
 

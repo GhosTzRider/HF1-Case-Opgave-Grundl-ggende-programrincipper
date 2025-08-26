@@ -6,7 +6,6 @@ class PluklisteProgram // test
 
     static void Main()
     {
-        
 
         Directory.CreateDirectory("import");    // Starter med at lave et directory "import" - overskriver den gammel import?
 
@@ -16,10 +15,7 @@ class PluklisteProgram // test
             Console.ReadLine();
             return;
         }
-
-
         KonsolMenu.KonsolMenuMethod();
-     
     }
 }
 

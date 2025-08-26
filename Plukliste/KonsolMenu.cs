@@ -14,7 +14,7 @@ namespace Plukliste
             List<string> files;     // nye filer defineres som en string-list
             var index = -1;         // index starter på -1
 
-            files = Directory.EnumerateFiles("export").ToList();        // Lister directory "export" og laver en liste af alle filerne i den mappe
+            files = Directory.EnumerateFiles("export", "*.XML").ToList();  // Lister directory "export" og laver en liste af alle filerne i den mappe, og finder kun XML filer
             var plukliste = new Pluklist();
             string templateType = string.Empty;
 
@@ -29,6 +29,10 @@ namespace Plukliste
                 else
                 {
                     if (index == -1) index = 0; // ellers, hvis index er -1, så sæt index til 0
+
+                    
+                    
+                    
 
                     Console.WriteLine($"Plukliste {index + 1} af {files.Count}");   // og skriv "Plukliste X af Y" i konsollen, hvor X er index + 1 og Y er antallet af filer
                     Console.WriteLine($"\nfile: {files[index]}");
