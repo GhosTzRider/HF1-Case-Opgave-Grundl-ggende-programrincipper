@@ -1,7 +1,7 @@
 ﻿//Eksempel på funktionel kodning hvor der kun bliver brugt et model lag
 namespace Plukliste;
 
-class PluklisteProgram
+class PluklisteProgram // test
 {
 
     static void Main()      // Alt kører i main - Skal ud i nogle klasser med underliggende metoder... op et tidspunkt
