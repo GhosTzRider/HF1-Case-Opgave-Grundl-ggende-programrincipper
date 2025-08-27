@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Plukliste
 {
@@ -12,9 +13,10 @@ namespace Plukliste
         {
             char readKey = ' ';
             List<string> files;     // nye filer defineres som en string-list
-            var index = -1;         // index starter på -1
+            var index = -1;         // index starter på -1                       
 
-            files = Directory.EnumerateFiles("export").ToList();        // Lister directory "export" og laver en liste af alle filerne i den mappe
+            files = Directory.EnumerateFiles("export", "*.XML").ToList();  // Lister directory "export" og laver en liste af alle filerne i den mappe, og finder kun XML filer
+
             var plukliste = new Pluklist();
             string templateType = string.Empty;
 
@@ -28,24 +30,23 @@ namespace Plukliste
                 }
                 else
                 {
-                    if (index == -1) index = 0; // ellers, hvis index er -1, så sæt index til 0
+                    if (index == -1) index = 0; // ellers, hvis index er -1, så sæt index til 0                                     
 
                     Console.WriteLine($"Plukliste {index + 1} af {files.Count}");   // og skriv "Plukliste X af Y" i konsollen, hvor X er index + 1 og Y er antallet af filer
                     Console.WriteLine($"\nfile: {files[index]}");
 
                     //read file
                     FileStream file = File.OpenRead(files[index]);                      // Læser filen som et index?
-                    System.Xml.Serialization.XmlSerializer xmlSerializer =              // Serializer XML-filen
-                        new System.Xml.Serialization.XmlSerializer(typeof(Pluklist));   // Laver en ny klasse Pluklist 
-                    plukliste = (Pluklist?)xmlSerializer.Deserialize(file);         // Definerer pluklisten som en deserialized fil fra ordren i XML-format
-                   
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Pluklist));   // Laver en ny klasse Pluklist 
+                    plukliste = (Pluklist?)xmlSerializer.Deserialize(file);             // Definerer pluklisten som en deserialized fil fra ordren i XML-format
+
 
                     //print plukliste
                     if (plukliste != null && plukliste.Lines != null)
                     {
-                        Console.WriteLine("\n{0, -13}{1}", "Name:", plukliste.Name);        // Print navn på pluklisten
-                        Console.WriteLine("{0, -13}{1}", "Forsendelse:", plukliste.Forsendelse);    // Print forsendelse på pluklisten
-                        Console.WriteLine("{0, -13}{1}", "Adresse:", plukliste.Adresse);        // Print adresse på pluklisten                                                                            
+                        Console.WriteLine("\n{0, -13}{1}", "Name:", plukliste.Name);                            // Print navn på pluklisten
+                        Console.WriteLine("{0, -13}{1}", "Forsendelse:", plukliste.Forsendelse);                // Print forsendelse på pluklisten
+                        Console.WriteLine("{0, -13}{1}", "Adresse:", plukliste.Adresse);                        // Print adresse på pluklisten                                                                            
 
                         Console.WriteLine("\n{0,-7}{1,-9}{2,-20}{3}", "Antal", "Type", "Produktnr.", "Navn");   // Print overskrifter for pluklisten
                         foreach (var item in plukliste.Lines)
@@ -55,7 +56,7 @@ namespace Plukliste
                         }
                     }
                     file.Close();       // Og lukker når den er done
-                }               
+                }
 
                 //Print options - Interaktivt interface i konsollen
                 Console.WriteLine("\n\nOptions:");
@@ -81,7 +82,7 @@ namespace Plukliste
                 switch (readKey)    // switch kigger på hvilke taster der er trykket på og eksekverer en kommando ud fra det indtastede bogstav
                 {
                     case 'G':
-                        files = Directory.EnumerateFiles("export").ToList();
+                        files = Directory.EnumerateFiles("export", "*.XML").ToList();
                         index = -1;
                         ColoredLetters.WriteLinesOnlyInRed("Pluklister genindlæst.");
                         break;
@@ -96,6 +97,7 @@ namespace Plukliste
                         var filewithoutPath = files[index].Substring(files[index].LastIndexOf('\\'));   // Fjerner stien fra filnavnet, så kun selve filnavnet er tilbage
                         var destPath = string.Format(@"import\\{0}", filewithoutPath);                  // Definerer en ny streng som er stien til import-mappen med filnavnet
 
+                        // Håndterer HTML vejledninger
                         string html = HTMLReader.ReplaceTagsInHTML(plukliste, templateType);    // kalder på metoden for at erstatte tags i HTML-filen med værdier fra pluklisten                        
                         string HtmlFileName = filewithoutPath.Replace(".XML", ".HTML");         // Definerer ny streng som er navnet på forsendelsen med filtypen .html
                         Directory.CreateDirectory("print");                                     // Laver en mappe der hedder print, hvis den ikke findes
@@ -105,16 +107,16 @@ namespace Plukliste
 
                         if (File.Exists(destPath))
                         {
-                            File.Delete(destPath);  // Sletter filen i import-mappen hvis den allerede findes for at ungdå fejl
+                            File.Delete(destPath);  // Sletter filen i import-mappen hvis den allerede findes for at undgå fejl
                         }
 
                         File.Move(files[index], destPath);                                      // Flytter filen til import-mappen
                         Console.WriteLine($"Plukseddel {files[index]} afsluttet.");             // Skriver i konsollen at pluksedlen er afsluttet
-                        files.Remove(files[index]);             
+                        files.Remove(files[index]);
                         if (index == files.Count) index--;
                         break;
                 }
             }
-        }        
+        }
     }
 }
