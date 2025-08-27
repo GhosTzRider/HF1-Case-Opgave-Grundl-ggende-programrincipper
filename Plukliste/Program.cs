@@ -15,7 +15,14 @@ class PluklisteProgram // test
             Console.ReadLine();
             return;
         }
-        KonsolMenu.KonsolMenuMethod();
+
+        Scanner.IScanner scanner = new CSVScanner();    // Opretter en instans af CSVScanner som implementerer IScanner interfacet
+        scanner.CSVreader();                            // Kalder CSVreader metoden for at konvertere CSV filer til XML filer inden konsollen kaldes op
+        Scanner.IScanner converter = new CSVScanner();  // gør det samme for CSVconverter metoden
+        converter.CSVconverter();                       // og konverterer CSV filer i export til XML filer
+
+
+        KonsolMenu.KonsolMenuMethod();                  // Kalder konsolmenu metoden
     }
 }
 
