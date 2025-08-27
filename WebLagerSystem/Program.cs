@@ -39,14 +39,14 @@ namespace WebLagerSystem
                         <ul>
                             {listItems}
                         </ul>
-                    </div>   
+                    </div>
                 </body>
                 <script>
                     document.addEventListener(""DOMContentLoaded"", function() {{
                         document.querySelectorAll("".editButton"").forEach(function(btn) {{
                             btn.addEventListener(""click"", function() {{
                                 var idx = btn.getAttribute(""data-idx"");
-                                var form = document.getElementById(""editForm"" + idx);
+                                let form = document.getElementById(""editForm"" + idx);
                                 if (form.style.display === ""none"") {{
                                     form.style.display = ""block"";
                                 }} else {{
@@ -57,7 +57,7 @@ namespace WebLagerSystem
                         document.querySelectorAll("".editForm"").forEach(function(form) {{
                             form.addEventListener(""submit"", function(e) {{
                                 e.preventDefault();
-                                var formData = new FormData(form);
+                                let formData = new FormData(form);
                                 fetch(""/edit"", {{
                                     method: ""POST"",
                                     body: formData
@@ -76,7 +76,7 @@ namespace WebLagerSystem
 
                     function deleteProduct(idx) {{
                         if (!confirm('Are you sure you want to delete this product?')) return;
-                        var formData = new FormData();
+                        let formData = new FormData();
                         formData.append('idx', idx);
                         fetch(""/delete"", {{
                             method: ""POST"",
