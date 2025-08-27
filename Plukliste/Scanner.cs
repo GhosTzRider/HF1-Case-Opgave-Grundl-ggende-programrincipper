@@ -57,7 +57,7 @@ namespace Plukliste
                             Amount = int.Parse(columns[3])
 
                         };
-                        items.Add(scanliste);
+                        items.Add(scanliste);       // Tilføj den scannede item til listen
                     }
 
                 }
