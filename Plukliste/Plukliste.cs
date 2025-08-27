@@ -20,14 +20,3 @@ public enum ItemType        /// og itemtypen kan være en af følgende:
 {
     Fysisk, Print, Pickup
 }
-
-public class ScannedItems
-{
-    public string? ProductID;    
-    public ItemType Pickup;
-    public string? Description;
-    public int Amount;
-}
-
-
-
