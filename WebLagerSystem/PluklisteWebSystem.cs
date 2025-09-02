@@ -4,7 +4,7 @@ namespace WebLagerSystem
 {
     public class PluklisteWebSystem
     {
-        public static string pluklisteCreate() 
+        public static string pluklisteCreate()
         {
             var builder = WebApplication.CreateBuilder();
             var app = builder.Build();
@@ -42,7 +42,7 @@ namespace WebLagerSystem
             <div id=""´templateDropdowns"">
                 <div class=""template-dropdown"">
                     <label>Choose a template:</label>
-                    <select name=""Template"" class=""input is-small mb-1"">
+                    <select id=""Template"" class=""input is-small mb-1"">
                         <option value=""Print-Welcome"">Welcome</option>
                         <option value=""Print-Opgrade"">Opgrade</option>
                         <option value=""Print-Opsigelse"">Opsigelse</option>
@@ -73,12 +73,14 @@ namespace WebLagerSystem
             var PSN = document.querySelector('input[name=""PSN""]').value;
             var forsendelse = document.querySelector('input[name=""forsendelse""]').value;
             var adresse = document.querySelector('input[name=""adresse""]').value;
+            var template = document.getElementById('Template').value;
             var products = Array.from(form.querySelectorAll('select[name=""products""]')).map(select => select.value);
+            products.push(template);
             var data = {{
-                name: PSN,
-                forsendelse: forsendelse,
-                adresse: adresse,
-                products: products
+                Name: PSN,
+                Forsendelse: forsendelse,
+                Adresse: adresse,
+                Lines: products
             }};
             fetch('/api/plukliste', {{
                 method: 'POST',
@@ -122,5 +124,6 @@ namespace WebLagerSystem
             app.RunAsync();
             return HTMLPlukliste;
         }
-    }   
+
+    }
 }
