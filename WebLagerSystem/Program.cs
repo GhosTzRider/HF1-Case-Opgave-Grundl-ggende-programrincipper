@@ -40,20 +40,6 @@ namespace WebLagerSystem
                     <title>CMS system</title>
                     <link rel=""stylesheet"" href=""https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"">
                 </head>
-<<<<<<< HEAD
-                <body class=""is-flex is-align-items-center is-flex-direction-column"">
-                    <div class=""is-justify-content-center is-align-items-center"">
-                        <ul>
-                            {listItems}
-                        </ul>
-<<<<<<< HEAD
-                    </div>   
-                    {WebLagerSystem.PluklisteWebSystem.pluklisteCreate()}
-=======
-                    </div>
->>>>>>> 7445f1b2e924635ce03e7a4625f81a466d788538
-                </body>
-=======
                 <body>
                     <nav class=""class=""navbar is-black is-flex is-justify-content-center is-align-items-center"" role=""navigation"" aria-label=""main navigation"""">
                        <div class=""tabs is-centered gap-2"">
@@ -82,7 +68,6 @@ namespace WebLagerSystem
                         </div>
                         <div class=""column""></div>
                     </div>
->>>>>>> c45ab6172967075504751fa3300415806fb1bb78
                 <script>
                     document.addEventListener(""DOMContentLoaded"", function() {{
                         document.querySelectorAll("".editButton"").forEach(function(btn) {{
