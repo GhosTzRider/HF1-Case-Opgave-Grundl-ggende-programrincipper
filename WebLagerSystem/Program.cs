@@ -40,6 +40,7 @@ namespace WebLagerSystem
                             {listItems}
                         </ul>
                     </div>   
+                    {WebLagerSystem.PluklisteWebSystem.pluklisteCreate()}
                 </body>
                 <script>
                     document.addEventListener(""DOMContentLoaded"", function() {{
@@ -135,7 +136,22 @@ namespace WebLagerSystem
                 return Results.Json(new { success = true });
             });
 
+            app.MapPost("/api/plukliste", async (HttpContext context) =>
+            {
+                using var reader = new StreamReader(context.Request.Body);
+                var body = await reader.ReadToEndAsync();
+                var filePath = Path.Combine(AppContext.BaseDirectory, "Pluklistfolder.json");
+                await File.WriteAllTextAsync(filePath, body);
+                context.Response.StatusCode = 200;
+            });
+
             app.Run();
+        }
+        // In PluklisteWebSystem.cs
+        public static string pluklisteCreate()
+        {
+            // return your HTML string here
+            return "<div>Plukliste content</div>";
         }
     }
 
