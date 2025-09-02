@@ -2,7 +2,7 @@
 {
     public interface IProductList
     {
-        List<Product> Products();
+        List<Plukliste.Item> Products();
 
     }
 }

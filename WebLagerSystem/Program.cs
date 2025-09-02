@@ -1,3 +1,4 @@
+using Plukliste;
 using System.Text.Json;
 
 namespace WebLagerSystem
@@ -17,18 +18,26 @@ namespace WebLagerSystem
 
                 var tableRows = string.Join("\n", products.Select((p, idx) =>
                     $@"<tr>
-                        <td>{p.Name}</td>
+                        <td>{p.Title}</td>
                         <td>{p.Amount}</td>
                         <td>
                             <button type=""button"" class=""button is-small mb-2 ml-2 editButton"" data-idx=""{idx}"">edit product</button>
                         </td>
                         <td>
                         <form class=""editForm mt-2"" id=""editForm{idx}"" style=""display:none;"">
+<<<<<<< Updated upstream
                                 <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{p.Name}"" />
                                 <input class=""input is-small mb-1"" type=""number"" name=""amount"" value=""{p.Amount}"" min=""0"" />
                                 <input type=""hidden"" name=""idx"" value=""{idx}"" />
                                 <button class=""button is-success is-small"" type=""submit"" name=""action"" value=""save"">Save</button>
                                 <button class=""button is-danger is-small"" type=""button"" name=""action"" value=""delete"" onclick=""deleteProduct({idx})"">Delete</button>
+=======
+                            <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{p.Title}"" />
+                            <input class=""input is-small mb-1"" type=""number"" name=""amount"" value=""{p.Amount}"" min=""0"" />
+                            <input type=""hidden"" name=""idx"" value=""{idx}"" />
+                            <button class=""button is-success is-small"" type=""submit"" name=""action"" value=""save"">Save</button>
+                            <button class=""button is-danger is-small"" type=""button"" name=""action"" value=""delete"" onclick=""deleteProduct({idx})"">Delete</button>
+>>>>>>> Stashed changes
                         </form>
                         </td>
                     </tr>"
@@ -169,7 +178,7 @@ namespace WebLagerSystem
 
     public class ProductList : IProductList
     {
-        private List<Product> products;
+        private List<Item> products;
         private readonly string jsonPath;
 
         public ProductList()
@@ -187,15 +196,15 @@ namespace WebLagerSystem
                 {
                     PropertyNameCaseInsensitive = true
                 };
-                products = JsonSerializer.Deserialize<List<Product>>(json, options) ?? new List<Product>();
+                products = JsonSerializer.Deserialize<List<Item>>(json, options) ?? new List<Item>();
             }
             else
             {
-                products = new List<Product>();
+                products = new List<Item>();
             }
         }
 
-        public List<Product> Products()
+        public List<Item> Products()
         {
             return products;
         }
