@@ -25,19 +25,11 @@ namespace WebLagerSystem
                         </td>
                         <td>
                         <form class=""editForm mt-2"" id=""editForm{idx}"" style=""display:none;"">
-<<<<<<< Updated upstream
-                                <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{p.Name}"" />
-                                <input class=""input is-small mb-1"" type=""number"" name=""amount"" value=""{p.Amount}"" min=""0"" />
-                                <input type=""hidden"" name=""idx"" value=""{idx}"" />
-                                <button class=""button is-success is-small"" type=""submit"" name=""action"" value=""save"">Save</button>
-                                <button class=""button is-danger is-small"" type=""button"" name=""action"" value=""delete"" onclick=""deleteProduct({idx})"">Delete</button>
-=======
                             <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{p.Title}"" />
                             <input class=""input is-small mb-1"" type=""number"" name=""amount"" value=""{p.Amount}"" min=""0"" />
                             <input type=""hidden"" name=""idx"" value=""{idx}"" />
                             <button class=""button is-success is-small"" type=""submit"" name=""action"" value=""save"">Save</button>
                             <button class=""button is-danger is-small"" type=""button"" name=""action"" value=""delete"" onclick=""deleteProduct({idx})"">Delete</button>
->>>>>>> Stashed changes
                         </form>
                         </td>
                     </tr>"
@@ -147,7 +139,7 @@ namespace WebLagerSystem
                 var products = productList.Products();
                 if (idx < 0 || idx >= products.Count) return Results.Json(new { success = false });
 
-                products[idx].Name = name;
+                products[idx].Title = name;
                 products[idx].Amount = amount;
 
                 await productList.SaveAsync(); // Always save to file
