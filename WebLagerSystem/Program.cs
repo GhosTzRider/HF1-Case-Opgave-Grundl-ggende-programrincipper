@@ -14,26 +14,33 @@ namespace WebLagerSystem
             app.MapGet("/", () =>
             {
                 var products = productList.Products();
-                var listItems = string.Join("\n", products.Select((p, idx) =>
-                    $@"<li>
-                        {p.Name} (Amount: {p.Amount})
-                        <button type=""button"" class=""button is-danger is-small mb-2 ml-2 editButton"" data-idx=""{idx}"">edit product</button>
+
+                var tableRows = string.Join("\n", products.Select((p, idx) =>
+                    $@"<tr>
+                        <td>{p.Name}</td>
+                        <td>{p.Amount}</td>
+                        <td>
+                            <button type=""button"" class=""button is-small mb-2 ml-2 editButton"" data-idx=""{idx}"">edit product</button>
+                        </td>
+                        <td>
                         <form class=""editForm mt-2"" id=""editForm{idx}"" style=""display:none;"">
-                            <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{p.Name}"" />
-                            <input class=""input is-small mb-1"" type=""number"" name=""amount"" value=""{p.Amount}"" min=""0"" />
-                            <input type=""hidden"" name=""idx"" value=""{idx}"" />
-                            <button class=""button is-success is-small"" type=""submit"" name=""action"" value=""save"">Save</button>
-                            <button class=""button is-danger is-small"" type=""button"" name=""action"" value=""delete"" onclick=""deleteProduct({idx})"">Delete</button>
+                                <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{p.Name}"" />
+                                <input class=""input is-small mb-1"" type=""number"" name=""amount"" value=""{p.Amount}"" min=""0"" />
+                                <input type=""hidden"" name=""idx"" value=""{idx}"" />
+                                <button class=""button is-success is-small"" type=""submit"" name=""action"" value=""save"">Save</button>
+                                <button class=""button is-danger is-small"" type=""button"" name=""action"" value=""delete"" onclick=""deleteProduct({idx})"">Delete</button>
                         </form>
-                    </li>"
+                        </td>
+                    </tr>"
                 ));
 
                 var html = $@"<!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Hello</title>
+                    <title>CMS system</title>
                     <link rel=""stylesheet"" href=""https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"">
                 </head>
+<<<<<<< HEAD
                 <body class=""is-flex is-align-items-center is-flex-direction-column"">
                     <div class=""is-justify-content-center is-align-items-center"">
                         <ul>
@@ -46,6 +53,36 @@ namespace WebLagerSystem
                     </div>
 >>>>>>> 7445f1b2e924635ce03e7a4625f81a466d788538
                 </body>
+=======
+                <body>
+                    <nav class=""class=""navbar is-black is-flex is-justify-content-center is-align-items-center"" role=""navigation"" aria-label=""main navigation"""">
+                       <div class=""tabs is-centered gap-2"">
+                          <ul>
+                            <li>lagersystem</li>
+                            <li>lav plukliste</li>
+                            <li>oprettet pluklister</li>
+                          </ul>
+                       </div>
+                    </nav>
+                    <div class=""columns is-gapless"">
+                        <div class=""column is-half"">
+                            <table class=""table is-striped is-fullwidth"">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tableRows}
+                                </tbody>
+                            </table>
+                            <button class=""button is-primary "">Add Products</button>
+                        </div>
+                        <div class=""column""></div>
+                    </div>
+>>>>>>> c45ab6172967075504751fa3300415806fb1bb78
                 <script>
                     document.addEventListener(""DOMContentLoaded"", function() {{
                         document.querySelectorAll("".editButton"").forEach(function(btn) {{
@@ -97,6 +134,7 @@ namespace WebLagerSystem
                         }});
                     }}
                 </script>
+                </body>
                 </html>";
 
                 return Results.Content(html, "text/html");

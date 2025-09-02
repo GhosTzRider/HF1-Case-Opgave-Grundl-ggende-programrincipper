@@ -11,15 +11,12 @@ public class Pluklist
 public class Item
 {
     public string ProductID;    // klassen Item indeholder et produkt ID, titel, type og antal
-    public string Title;            
+    public string Title;
     public ItemType Type;
     public int Amount;
 }
 
 public enum ItemType        /// og itemtypen kan være en af følgende:
 {
-    Fysisk, Print
+    Fysisk, Print, Pickup
 }
-
-
-

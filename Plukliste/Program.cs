@@ -6,7 +6,6 @@ class PluklisteProgram // test
 
     static void Main()
     {
-        
 
         Directory.CreateDirectory("import");    // Starter med at lave et directory "import" - overskriver den gammel import?
 
@@ -17,9 +16,12 @@ class PluklisteProgram // test
             return;
         }
 
+        Scanner.IScanner scanner = new CSVScanner();    // Opretter en instans af CSVScanner som implementerer IScanner interfacet
+        scanner.CSVreader();                            // Kalder CSVreader metoden for at konvertere CSV filer til XML filer inden konsollen kaldes op
+                               
 
-        KonsolMenu.KonsolMenuMethod();
-     
+        
+        KonsolMenu.KonsolMenuMethod();                  // Kalder konsolmenu metoden
     }
 }
 
