@@ -237,15 +237,15 @@ namespace WebLagerSystem
                 {
                     PropertyNameCaseInsensitive = true
                 };
-                products = JsonSerializer.Deserialize<List<Product>>(json, options) ?? new List<Product>();
+                products = JsonSerializer.Deserialize<List<Plukliste.Item>>(json, options) ?? new List<Plukliste.Item>();
             }
             else
             {
-                products = new List<Product>();
+                products = new List<Plukliste.Item>();
             }
         }
 
-        public List<Product> Products()
+        public List<Plukliste.Item> Products()
         {
             return products;
         }
