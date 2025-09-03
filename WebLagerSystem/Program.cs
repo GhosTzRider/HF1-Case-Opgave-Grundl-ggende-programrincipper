@@ -1,3 +1,4 @@
+using Plukliste;
 using System.Text.Json;
 
 namespace WebLagerSystem
@@ -6,6 +7,9 @@ namespace WebLagerSystem
     {
         public static void Main(string[] args)
         {
+            /* var pluklisteMenu = new PluklisteMenu();
+            pluklisteMenu.PluklisteMenuMethod();   */     // Samler konsol fra tidligere stories til programmet
+
             var builder = WebApplication.CreateBuilder(args);
             var app = builder.Build();
 
