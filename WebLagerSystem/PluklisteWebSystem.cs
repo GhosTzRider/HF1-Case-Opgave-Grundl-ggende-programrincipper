@@ -21,13 +21,6 @@ namespace WebLagerSystem
             });
 
             var HTMLPlukliste = $@"<!DOCTYPE html>
-
-<html>
-<head>
-    <title>Plukliste</title>
-    <link rel=""stylesheet"" href=""https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"">
-</head>
-<body class=""is-flex is-align-items-center is-flex-direction-column"">
     <div class=""is-justify-content-center is-align-items-center"">
         <h1 class=""title"">Plukliste</h1>
         <form class=""editForm mt-2"" id=""editForm0"" style=""display:block;"">
@@ -118,9 +111,7 @@ namespace WebLagerSystem
                 }});
             }}
         }});
-    </script>
-</body>
-</html>";
+    </script>";
             app.RunAsync();
             return HTMLPlukliste;
         }

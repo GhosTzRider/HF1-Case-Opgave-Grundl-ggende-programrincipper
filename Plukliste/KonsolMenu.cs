@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -40,6 +41,8 @@ namespace Plukliste
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Pluklist));   // Laver en ny klasse Pluklist 
                     plukliste = (Pluklist?)xmlSerializer.Deserialize(file);             // Definerer pluklisten som en deserialized fil fra ordren i XML-format
 
+                    //string jsonString = JsonSerializer.Serialize(plukliste.Lines);
+                    //File.AppendAllTextAsync( "export/products.json", jsonString);
 
                     //print plukliste
                     if (plukliste != null && plukliste.Lines != null)
