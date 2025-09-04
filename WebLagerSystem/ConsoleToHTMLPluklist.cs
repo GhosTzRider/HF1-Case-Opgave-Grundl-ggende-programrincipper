@@ -38,10 +38,10 @@ namespace WebLagerSystem
                 <div class=""block""></div> 
                     <button class=""button is-danger"">Quit</button>
                     <button class=""button is-warning"">Afslut Plukseddel</button>
-                    <button class=""button is-success"">Næste Plukseddel</button>
+                    <button class=""button is-success"">N&aeligste Plukseddel</button>
                     <button class=""button is-success"">Forrige Plukseddel</button>
-                    <button class=""button is-info"">Genindlæs Pluksedler</button>
-        </div>
+                    <button class=""button is-info"">Genindl&aeligs Pluksedler</button>
+                </div>
             ";
         }
 
