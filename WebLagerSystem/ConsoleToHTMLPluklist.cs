@@ -1,4 +1,5 @@
 ﻿using Plukliste;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -9,18 +10,29 @@ namespace WebLagerSystem
     {
         public static string PluklisteManager()
         {
-            return @"
+            var files = Directory.EnumerateFiles("export", "*.JSON")
+                .Select(f => f.Replace("export\\", ""))
+                .ToList();
+
+            var index = 0;
+            FileStream file = File.OpenRead(Path.Combine("export", files[index]));
+            var plukliste = JsonSerializer.Deserialize<Pluklist>(file);
+            
+            
+
+
+            return $@"
                 <div class=""box"">
                 <div class=""block"">
-                    Plukliste X af Y
+                    Plukliste {index + 1} af {files.Count}               
                 </div> 
                 <div class=""block"">
-                    Filnavn:
+                    Filnavn: {files[index]}
                 </div> 
                 <div class=""block"">
-                 Navn:
-                    <br>Forsendelse:
-                    <br>Adresse:
+                    Navn: {plukliste?.Name}
+                    <br>Forsendelse: {plukliste?.Forsendelse}
+                    <br>Adresse: {plukliste?.Adresse}
                 </div> 
                 <table class=""table"">
                     <thead>
@@ -31,7 +43,10 @@ namespace WebLagerSystem
                             <th>Navn:</th>
                       </thead>
                       <tbody>  
-
+                        <th>{}</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                       </tbody>
                     </thead>
                 </table>

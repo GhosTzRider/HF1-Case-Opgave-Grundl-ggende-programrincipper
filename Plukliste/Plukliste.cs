@@ -6,7 +6,7 @@ public class Pluklist
     public string? Forsendelse { get; set; }         // Pluklisten indeholder et navn, en forsendelse og en adresse
     public string? Adresse { get; set; }
     public List<Item> Lines { get; set; }// og listen af linjer er defineret som en liste af Item objekter
-    //public List<Item> Lines = new List<Item>(); 
+    // public List<Item> Lines = new List<Item>(); 
     public void AddItem(Item item) { Lines.Add(item); } // Metode til at tilføje et item til listen
     public Pluklist()
     {
