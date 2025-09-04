@@ -11,15 +11,12 @@ namespace WebLagerSystem
     {
         public static void Main(string[] args)
         {
-            ConsoleToHTMLPluklist.PluklisteReader(); // Læser plukliste XML filer og konverterer dem til JSON filer
-
-
-            // var pluklisteMenu = new PluklisteMenu();      // Samler konsol fra tidligere stories til programmet
-
             var builder = WebApplication.CreateBuilder(args);
-
             var app = builder.Build();
             var productList = new ProductList();
+
+            // Make ProductList available to PluklisteWebSystem
+            PluklisteWebSystem.ProductListInstance = productList;
 
             app.MapGet("/", () =>
             {
@@ -208,9 +205,51 @@ namespace WebLagerSystem
             {
                 using var reader = new StreamReader(context.Request.Body);
                 var body = await reader.ReadToEndAsync();
-                var filePath = Path.Combine(AppContext.BaseDirectory, "Pluklistfolder.json");
-                await File.WriteAllTextAsync(filePath, body);
-                context.Response.StatusCode = 200;
+
+                // Parse the incoming JSON
+                var plukData = JsonSerializer.Deserialize<PluklisteRequest>(body);
+
+                if (plukData == null || string.IsNullOrWhiteSpace(plukData.Name))
+                    return Results.Json(new { success = false, error = "Missing name" });
+
+                // Build the export object
+                var exportObj = new
+                {
+                    Name = plukData.Name,
+                    Forsendelse = plukData.Forsendelse,
+                    Adresse = plukData.Adresse,
+                    Lines = plukData.Lines.Select(line =>
+                    {
+                        var item = PluklisteWebSystem.ProductListInstance?.Products()
+                            .FirstOrDefault(p => p.Title == line || p.ProductID == line);
+
+                        return new
+                        {
+                            ProductID = item?.ProductID ?? "",
+                            Title = item?.Title ?? line,
+                            Type = item?.Type.ToString() ?? "",
+                            Amount = item?.Amount ?? 1
+                        };
+                    }).ToList()
+                };
+
+                // Write to export folder in bin/debug (runtime)
+                var exportDirRuntime = Path.Combine(AppContext.BaseDirectory, "export");
+                Directory.CreateDirectory(exportDirRuntime);
+                var fileName = $"{plukData.Name}_products.json";
+                var filePathRuntime = Path.Combine(exportDirRuntime, fileName);
+
+                // Write to export folder in project source (WebLagerSystem/export)
+                var projectDir = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent;
+                var exportDirProject = Path.Combine(projectDir?.FullName ?? "", "export");
+                Directory.CreateDirectory(exportDirProject);
+                var filePathProject = Path.Combine(exportDirProject, fileName);
+
+                var json = JsonSerializer.Serialize(exportObj, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(filePathRuntime, json);
+                await File.WriteAllTextAsync(filePathProject, json);
+
+                return Results.Json(new { success = true });
             });
 
             app.MapPost("/add", async (HttpRequest request) =>
@@ -284,5 +323,14 @@ namespace WebLagerSystem
             var options = new JsonSerializerOptions { WriteIndented = true };
             await File.WriteAllTextAsync(jsonPath, JsonSerializer.Serialize(products, options));
         }
+    }
+
+    // Helper class for deserialization
+    public class PluklisteRequest
+    {
+        public string Name { get; set; }
+        public string Forsendelse { get; set; }
+        public string Adresse { get; set; }
+        public List<string> Lines { get; set; }
     }
 }
