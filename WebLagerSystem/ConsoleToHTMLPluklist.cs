@@ -1,4 +1,6 @@
 ﻿using Plukliste;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace WebLagerSystem
@@ -34,16 +36,27 @@ namespace WebLagerSystem
             ";
         }
 
-        public static void PluklisteReader(Pluklist? plukliste)
+        public static async void PluklisteReader()
         {
-            List<string> files;
-            files = [.. Directory.EnumerateFiles("export", "*.XML")];            // Bruger samme fremgangsmåde som i KonsolMenu til at finde XML-filer i "export" mappen
-            plukliste = new Pluklist();            
-            var index = -1;
 
-            FileStream file = File.OpenRead(files[index]);                       // Læser filen som et index?
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(Pluklist));   // Laver en ny klasse Pluklist 
-            plukliste = xmlSerializer.Deserialize(file) as Pluklist;             // Definerer pluklisten som en deserialized fil fra ordren i XML-format
+            CSVScanner scanner = new CSVScanner();
+            scanner.CSVreader();
+            List<string> files;
+            files = Directory.EnumerateFiles("export", "*.XML").ToList();
+
+            foreach (string file in files)
+            {
+                FileStream fileStream = File.OpenRead(file);
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Pluklist));
+                var plukliste = (Pluklist?)xmlSerializer.Deserialize(fileStream);
+                fileStream.Close();
+                if (plukliste != null && plukliste.Lines != null)
+                {
+                    string jsonString = JsonSerializer.Serialize(plukliste.Lines);
+                    string jsonPath = $"export\\{plukliste.Name}_products.json";
+                    await File.WriteAllTextAsync(jsonPath, jsonString);
+                }
+            }
 
         }
     }

@@ -10,6 +10,9 @@ namespace WebLagerSystem
     {
         public static void Main(string[] args)
         {
+            ConsoleToHTMLPluklist.PluklisteReader(); // Læser plukliste XML filer og konverterer dem til JSON filer
+
+
             // var pluklisteMenu = new PluklisteMenu();      // Samler konsol fra tidligere stories til programmet
 
             var builder = WebApplication.CreateBuilder(args);
