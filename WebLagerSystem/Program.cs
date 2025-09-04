@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Xml.Linq;
 using System.Globalization;
 using System.Xml.Serialization;
+using System.Net; // Add this at the top
 
 namespace WebLagerSystem
 {
@@ -26,14 +27,14 @@ namespace WebLagerSystem
 
                 var tableRows = string.Join("\n", products.Select((p, idx) =>
                     $@"<tr>
-                        <td>{p.Title}</td>
+                        <td>{WebUtility.HtmlEncode(p.Title)}</td>
                         <td>{p.Amount}</td>
                         <td>
-                            <button type=""button"" class=""button is-small mb-2 ml-2 editButton"" data-idx=""{idx}"">edit product</button>
+                            <button type=""button"" class=""button is-small mb-2 ml-2 editButton"" data-idx=""{idx}"">Rediger produkt</button>
                         </td>
                         <td>
                         <form class=""editForm mt-2"" id=""editForm{idx}"" style=""display:none;"">
-                            <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{p.Title}"" />
+                            <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{WebUtility.HtmlEncode(p.Title)}"" />
                             <input class=""input is-small mb-1"" type=""number"" name=""amount"" value=""{p.Amount}"" min=""0"" />
                             <input type=""hidden"" name=""idx"" value=""{idx}"" />
                             <button class=""button is-success is-small"" type=""submit"" name=""action"" value=""save"">Save</button>
@@ -63,8 +64,8 @@ namespace WebLagerSystem
                                 <table class=""table is-striped is-fullwidth"">
                                     <thead>
                                         <tr>
-                                            <th>Product Name</th>
-                                            <th>Amount</th>
+                                            <th>Produkt Navn</th>
+                                            <th>Antal</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -72,7 +73,8 @@ namespace WebLagerSystem
                                         {tableRows}
                                     </tbody>
                                 </table>
-                                <button class=""button is-primary "">Add Products</button>
+                                <button class=""js-modal-trigger button is-primary"" data-target=""modal-js-example"">Tilf&oslashj Produkt</button>
+                                {AddProduct.GetHtml()}
                             </div>
                         </div>
                     </div>
@@ -121,6 +123,7 @@ namespace WebLagerSystem
                             document.querySelectorAll("".editForm"").forEach(function(form) {{
                                 form.addEventListener(""submit"", function(e) {{
                                     e.preventDefault();
+                                    
                                     let formData = new FormData(form);
                                     fetch(""/edit"", {{
                                         method: ""POST"",
@@ -208,6 +211,28 @@ namespace WebLagerSystem
                 var filePath = Path.Combine(AppContext.BaseDirectory, "Pluklistfolder.json");
                 await File.WriteAllTextAsync(filePath, body);
                 context.Response.StatusCode = 200;
+            });
+
+            app.MapPost("/add", async (HttpRequest request) =>
+            {
+                productList.Reload(); // Always reload from file
+                var form = await request.ReadFormAsync();
+
+                var id = form["id"].ToString();
+                var name = form["name"].ToString();
+                if (!int.TryParse(form["quantity"], out int quantity)) return Results.Json(new { success = false });
+
+                // Assuming Product class has Id, Title, Amount
+                productList.Products().Add(new Plukliste.Item
+                {
+                    ProductID = id,
+                    Title = name,
+                    Amount = quantity
+                });
+
+                await productList.SaveAsync(); // Always save to file
+
+                return Results.Json(new { success = true });
             });
 
             app.Run();
