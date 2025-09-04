@@ -20,7 +20,7 @@ namespace WebLagerSystem
                 context.Response.StatusCode = 200;
             });
 
-            var HTMLPlukliste = $@"<!DOCTYPE html>
+            var HTMLPlukliste = $@"
     <div class=""is-justify-content-center is-align-items-center"">
         <h1 class=""title"">Plukliste</h1>
         <form class=""editForm mt-2"" id=""editForm0"" style=""display:block;"">
