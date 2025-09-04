@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Xml.Linq;
 using System.Globalization;
 using System.Xml.Serialization;
+using System.Net; // Add this at the top
 
 namespace WebLagerSystem
 {
@@ -23,14 +24,14 @@ namespace WebLagerSystem
 
                 var tableRows = string.Join("\n", products.Select((p, idx) =>
                     $@"<tr>
-                        <td>{p.Title}</td>
+                        <td>{WebUtility.HtmlEncode(p.Title)}</td>
                         <td>{p.Amount}</td>
                         <td>
                             <button type=""button"" class=""button is-small mb-2 ml-2 editButton"" data-idx=""{idx}"">edit product</button>
                         </td>
                         <td>
                         <form class=""editForm mt-2"" id=""editForm{idx}"" style=""display:none;"">
-                            <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{p.Title}"" />
+                            <input class=""input is-small mb-1"" type=""text"" name=""name"" value=""{WebUtility.HtmlEncode(p.Title)}"" />
                             <input class=""input is-small mb-1"" type=""number"" name=""amount"" value=""{p.Amount}"" min=""0"" />
                             <input type=""hidden"" name=""idx"" value=""{idx}"" />
                             <button class=""button is-success is-small"" type=""submit"" name=""action"" value=""save"">Save</button>
@@ -69,7 +70,8 @@ namespace WebLagerSystem
                                         {tableRows}
                                     </tbody>
                                 </table>
-                                <button class=""button is-primary "">Add Products</button>
+                                <button class=""js-modal-trigger button is-primary"" data-target=""modal-js-example"">Add Products</button>
+                                {AddProduct.GetHtml()}
                             </div>
                         </div>
                     </div>
@@ -118,6 +120,7 @@ namespace WebLagerSystem
                             document.querySelectorAll("".editForm"").forEach(function(form) {{
                                 form.addEventListener(""submit"", function(e) {{
                                     e.preventDefault();
+                                    
                                     let formData = new FormData(form);
                                     fetch(""/edit"", {{
                                         method: ""POST"",
