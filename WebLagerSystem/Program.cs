@@ -10,8 +10,7 @@ namespace WebLagerSystem
     {
         public static void Main(string[] args)
         {
-            /* var pluklisteMenu = new PluklisteMenu();
-            pluklisteMenu.PluklisteMenuMethod();   */     // Samler konsol fra tidligere stories til programmet
+            // var pluklisteMenu = new PluklisteMenu();      // Samler konsol fra tidligere stories til programmet
 
             var builder = WebApplication.CreateBuilder(args);
 

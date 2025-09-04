@@ -1,8 +1,12 @@
-﻿namespace WebLagerSystem
+﻿using Plukliste;
+using System.Xml.Serialization;
+
+namespace WebLagerSystem
 {
     public class ConsoleToHTMLPluklist
     {
-        public static string PluklisteManager() {
+        public static string PluklisteManager()
+        {
             return @"
                 <div>
                     <h1 class='title'>Create Plukliste</h1>
@@ -28,6 +32,19 @@
                     </script>
                 </div>
             ";
+        }
+
+        public static void PluklisteReader(Pluklist? plukliste)
+        {
+            List<string> files;
+            files = [.. Directory.EnumerateFiles("export", "*.XML")];            // Bruger samme fremgangsmåde som i KonsolMenu til at finde XML-filer i "export" mappen
+            plukliste = new Pluklist();            
+            var index = -1;
+
+            FileStream file = File.OpenRead(files[index]);                       // Læser filen som et index?
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(Pluklist));   // Laver en ny klasse Pluklist 
+            plukliste = xmlSerializer.Deserialize(file) as Pluklist;             // Definerer pluklisten som en deserialized fil fra ordren i XML-format
+
         }
     }
 }
