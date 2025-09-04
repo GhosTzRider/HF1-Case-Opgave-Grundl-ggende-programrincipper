@@ -28,8 +28,8 @@
                             </section>
                             <footer class=""modal-card-foot"">
                               <div class=""buttons"">
-                                <button class=""button is-success"">Save changes</button>
-                                <button class=""button"">Cancel</button>
+                                <button class=""button is-success"" id=""save-product-button"">Gem &aeligndringer</button>
+                                <button class=""button"">Annuller</button>
                               </div>
                             </footer>
                           </div>
@@ -74,6 +74,30 @@
                           document.addEventListener('keydown', (event) => {
                             if(event.key === ""Escape"") {
                               closeAllModals();
+                            }
+                          });
+                        });
+
+                        document.getElementById('save-product-button').addEventListener('click', function() {
+                          const id = document.getElementById('product-id').value;
+                          const name = document.getElementById('product-name').value;
+                          const quantity = document.getElementById('product-quantity').value;
+
+                          const formData = new FormData();
+                          formData.append('id', id);
+                          formData.append('name', name);
+                          formData.append('quantity', quantity);
+
+                          fetch('/add', {
+                            method: 'POST',
+                            body: formData
+                          })
+                          .then(response => response.json())
+                          .then(data => {
+                            if (data.success) {
+                              location.reload();
+                            } else {
+                              alert('Failed to add product.');
                             }
                           });
                         });
