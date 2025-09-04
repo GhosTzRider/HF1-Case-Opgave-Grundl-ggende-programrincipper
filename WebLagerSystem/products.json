@@ -1,0 +1,47 @@
+[
+  {
+    "ProductID": "NETGEAR-CM1000",
+    "Title": "NETGEAR DOCSIS 3.1 (CM1000)",
+    "Amount": 120
+  },
+  {
+    "ProductID": "PRINT-OPGRADE",
+    "Title": "Vejledning Opgradering",
+    "Amount": 12
+  },
+  {
+    "ProductID": "#830012",
+    "Title": "Papkasse 170x105x60",
+    "Amount": 18
+  },
+  {
+    "ProductID": "LABEL-RETUR",
+    "Title": "Retur label",
+    "Amount": 12
+  },
+  {
+    "ProductID": "PRINT-OPSIGELSE",
+    "Title": "Tak for denne gang",
+    "Amount": 4
+  },
+  {
+    "ProductID": "TX-302587",
+    "Title": "Triax TD 241E stikdås",
+    "Amount": 55
+  },
+  {
+    "ProductID": "PRINT-WELCOME",
+    "Title": "Velkomstbrev",
+    "Amount": 6
+  },
+  {
+    "ProductID": "COAX_CABEL_20M",
+    "Title": "Coax kabel rulle 20m",
+    "Amount": 23
+  },
+  {
+    "ProductID": "F-CONN",
+    "Title": "F-connector 8mm",
+    "Amount": 43
+  }
+]

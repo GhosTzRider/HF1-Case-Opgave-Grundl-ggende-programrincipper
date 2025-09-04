@@ -100,20 +100,21 @@ namespace WebLagerSystem
                                 }});
                             }});
                         }});
-                    </script>
-                    <script>
+
                         document.addEventListener(""DOMContentLoaded"", function() {{
                             document.querySelectorAll("".editButton"").forEach(function(btn) {{
                                 btn.addEventListener(""click"", function() {{
                                     var idx = btn.getAttribute(""data-idx"");
                                     let form = document.getElementById(""editForm"" + idx);
-                                    if (form.style.display === ""none"") {{
+                                    if (!form) return; 
+                                    if (getComputedStyle(form).display === ""none"") {{
                                         form.style.display = ""block"";
                                     }} else {{
                                         form.style.display = ""none"";
                                     }}
                                 }});
                             }});
+
                             document.querySelectorAll("".editForm"").forEach(function(form) {{
                                 form.addEventListener(""submit"", function(e) {{
                                     e.preventDefault();
@@ -133,24 +134,26 @@ namespace WebLagerSystem
                                 }});
                             }});
                         }});
-                        function deleteProduct(idx) {{{{
+
+                        function deleteProduct(idx) {{
                             if (!confirm('Are you sure you want to delete this product?')) return;
                             let formData = new FormData();
                             formData.append('idx', idx);
-                            fetch(""""/delete"""", {{{{
-                                method: """"POST"""",
+                            fetch(""/delete"", {{
+                                method: ""POST"",
                                 body: formData
-                            }}}})
+                            }})
                             .then(response => response.json())
-                            .then data => {{{{
-                                if (data.success) {{{{
+                            .then(data => {{
+                                if (data.success) {{
                                     location.reload();
-                                }}}} else {{{{
+                                }} else {{
                                     alert(""Failed to delete product."");
-                                }}}}
-                            }}}});
-                        }}}}            
+                                }}
+                            }});
+                        }}
                     </script>
+
                 </body>
                 </html>";
 
@@ -221,9 +224,8 @@ namespace WebLagerSystem
         private List<Plukliste.Item> products;
         private readonly string jsonPath;
 
-        public ProductList()
-        {
-            jsonPath = Path.Combine(AppContext.BaseDirectory, "products.json");
+        public ProductList() {
+            jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "products.json");
             Reload();
         }
 
