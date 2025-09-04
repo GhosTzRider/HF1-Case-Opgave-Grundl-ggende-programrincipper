@@ -61,9 +61,18 @@ namespace WebLagerSystem
                 fileStream.Close();
                 if (plukliste != null && plukliste.Lines != null)
                 {
-                    string jsonString = JsonSerializer.Serialize(plukliste.Lines);
+                    // Combine all relevant data into a single object
+                    var exportData = new
+                    {
+                        Name = plukliste.Name,
+                        Forsendelse = plukliste.Forsendelse,
+                        Adresse = plukliste.Adresse,
+                        Lines = plukliste.Lines
+                    };
+
+                    string json = JsonSerializer.Serialize(exportData);
                     string jsonPath = $"export\\{plukliste.Name}_products.json";
-                    await File.WriteAllTextAsync(jsonPath, jsonString);
+                    await File.WriteAllTextAsync(jsonPath, json);
                 }
             }
 
