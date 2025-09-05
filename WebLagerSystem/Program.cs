@@ -82,11 +82,13 @@ namespace WebLagerSystem
                         </div>
                     </div>
                     <div id=""tab-plukliste-manager"" class=""tab-content"" style=""display:none;"">
-                        <div class=""is-flex is-flex-direction-column column is-one-third"">
-                            <h1 class=""title"">Plukliste Manager</h1>
-                            {ConsoleToHTMLPluklist.PluklisteManager()}
-                        </div>
-                    </div>
+    <div class=""is-flex is-flex-direction-column column is-one-third"">
+        <h1 class=""title"">Plukliste Manager</h1>
+        <div id=""plukliste-manager-content"">
+            {ConsoleToHTMLPluklist.PluklisteManager()}
+        </div>
+    </div>
+</div>
                     <script>
                         // Tabs logic
                         document.addEventListener('DOMContentLoaded', function() {{
@@ -201,33 +203,20 @@ namespace WebLagerSystem
                 return Results.Json(new { success = true });
             });
 
-            app.MapPost("/api/plukliste", async (HttpContext context) =>
-            {
-                using var reader = new StreamReader(context.Request.Body);
-                var body = await reader.ReadToEndAsync();
-                var filePath = Path.Combine(AppContext.BaseDirectory, "Pluklistfolder.json");
-                await File.WriteAllTextAsync(filePath, body);
-                context.Response.StatusCode = 200;
-            });
 
             app.Run();
         }
 
-        // In PluklisteWebSystem.cs
-        public static string PluklisteCreate()
-        {
-            // return your HTML string here
-            return "<div>Plukliste content</div>";
-        }
 
-    }  
+    }
 
     public class ProductList
     {
         private List<Plukliste.Item> products;
         private readonly string jsonPath;
 
-        public ProductList() {
+        public ProductList()
+        {
             jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "products.json");
             Reload();
         }
@@ -259,5 +248,11 @@ namespace WebLagerSystem
             var options = new JsonSerializerOptions { WriteIndented = true };
             await File.WriteAllTextAsync(jsonPath, JsonSerializer.Serialize(products, options));
         }
+    }
+
+    public class PluklisteActionRequest
+    {
+        public int index { get; set; }
+        public string action { get; set; }
     }
 }
