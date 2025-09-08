@@ -137,14 +137,3 @@ document.addEventListener('DOMContentLoaded', () => {{
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
