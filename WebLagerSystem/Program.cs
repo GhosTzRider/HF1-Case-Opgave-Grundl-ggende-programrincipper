@@ -380,7 +380,6 @@ namespace WebLagerSystem
         {
             return products;
         }
-
         public async Task SaveAsync()
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
