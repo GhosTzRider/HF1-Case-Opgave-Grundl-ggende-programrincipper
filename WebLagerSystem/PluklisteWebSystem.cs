@@ -1,24 +1,22 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
 
 namespace WebLagerSystem
 {
     public class PluklisteWebSystem
     {
+        public static ProductList ProductListInstance { get; set; }
+
         public static string pluklisteCreate()
         {
-            var builder = WebApplication.CreateBuilder();
-            var app = builder.Build();
+            // Get the products list from the static ProductListInstance
+            var products = ProductListInstance?.Products() ?? new List<Plukliste.Item>();
 
-            // Add this API endpoint:
-            app.MapPost("/api/plukliste", async (HttpContext context) =>
-            {
-                using var reader = new StreamReader(context.Request.Body);
-                var body = await reader.ReadToEndAsync();
-                // Optionally validate/parse the JSON here
-                var filePath1 = "Pluklistfolder.json";
-                await File.WriteAllTextAsync(filePath1, body);
-                context.Response.StatusCode = 200;
-            });
+            var productListHtml = string.Join("\n", products.Select((p, idx) => $@"
+            <tr>
+                <option>{WebUtility.HtmlEncode(p.Title)}</option>
+            </tr>
+            "));
 
             var HTMLPlukliste = $@"
     <div class=""is-justify-content-center is-align-items-center"">
@@ -48,8 +46,7 @@ namespace WebLagerSystem
                 <div class=""product-dropdown"">
                     <label>Choose a Product:</label>
                     <select name=""products"" class=""input is-small mb-1"">
-                        <option value=""Netgear"">NETGEAR DOCSIS 3.1 (CM1000)</option>
-                        <option value=""Triax"">Triax TD 241E</option>
+                        {productListHtml}
                     </select>
                 </div>
             </div>
@@ -94,8 +91,7 @@ namespace WebLagerSystem
                     <div class=""product-dropdown"">
                         <label>Choose a Product:</label>
                         <select name=""products"" class=""input is-small mb-1"">
-                            <option value=""Netgear"">NETGEAR DOCSIS 3.1 (CM1000)</option>
-                            <option value=""Triax"">Triax TD 241E</option>
+                            {productListHtml}
                         </select>
                         <button class=""button is-danger is-small delete-product-btn"" type=""button"">Delete</button>
                     </div>
@@ -112,9 +108,7 @@ namespace WebLagerSystem
             }}
         }});
     </script>";
-            app.RunAsync();
             return HTMLPlukliste;
         }
-
     }
 }

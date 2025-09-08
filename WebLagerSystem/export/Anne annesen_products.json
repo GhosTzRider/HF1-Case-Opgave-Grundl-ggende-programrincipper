@@ -1,0 +1,25 @@
+{
+  "Name": "Anne annesen",
+  "Forsendelse": "PostNord",
+  "Adresse": "Andevej 200",
+  "Lines": [
+    {
+      "ProductID": "#830012",
+      "Title": "Papkasse 170x105x60",
+      "Type": "Fysisk",
+      "Amount": 18
+    },
+    {
+      "ProductID": "TX-302587",
+      "Title": "Triax TD 241E stikd\u00E5s",
+      "Type": "Fysisk",
+      "Amount": 55
+    },
+    {
+      "ProductID": "",
+      "Title": "Print-Opgrade",
+      "Type": "",
+      "Amount": 1
+    }
+  ]
+}
