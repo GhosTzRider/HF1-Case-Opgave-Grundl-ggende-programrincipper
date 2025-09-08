@@ -1,7 +1,8 @@
 using Plukliste;
-using System.Text.Json;
-using System.Xml.Linq;
 using System.Globalization;
+using System.Text.Json;
+using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Net; // Add this at the top
 
@@ -81,11 +82,13 @@ namespace WebLagerSystem
                         </div>
                     </div>
                     <div id=""tab-plukliste-manager"" class=""tab-content"" style=""display:none;"">
-                        <div class=""is-flex is-flex-direction-column column is-one-third"">
-                            <h1 class=""title"">Plukliste Manager</h1>
-                            {ConsoleToHTMLPluklist.PluklisteManager()}
-                        </div>
-                    </div>
+    <div class=""is-flex is-flex-direction-column column"">
+        <h1 class=""title"">Plukliste Manager</h1>
+        <div id=""plukliste-manager-content"">
+            {ConsoleToHTMLPluklist.PluklisteManager()}
+        </div>
+    </div>
+</div>
                     <script>
                         // Tabs logic
                         document.addEventListener('DOMContentLoaded', function() {{
@@ -155,6 +158,31 @@ namespace WebLagerSystem
                                 }}
                             }});
                         }}
+                        function attachPluklisteBoxListener() {{
+    const box = document.getElementById('plukliste-box');
+    if (!box) return;
+    box.addEventListener('click', function(e) {{
+        if (e.target.getAttribute('data-action') === 'naeste' || e.target.getAttribute('data-action') === 'forrige') {{
+            const action = e.target.getAttribute('data-action');
+            let index = parseInt(box.getAttribute('data-index')) || 0;
+            fetch('/plukliste/action', {{
+                method: 'POST',
+                headers: {{
+                    'Content-Type': 'application/json'
+                }},
+                body: JSON.stringify({{
+                    action: action, index: index
+                }})
+            }})
+            .then(response => response.text())
+            .then(html => {{
+                document.getElementById('plukliste-manager-content').innerHTML = html;
+                attachPluklisteBoxListener(); // Re-attach after update
+            }});
+        }}
+    }});
+}}
+
                     </script>
 
                 </body>
@@ -201,10 +229,114 @@ namespace WebLagerSystem
                 return Results.Json(new { success = true });
             });
 
-            app.MapPost("/api/plukliste", async (HttpContext context) =>
+            app.MapPost("/plukliste/action", async (HttpContext context) =>
             {
                 using var reader = new StreamReader(context.Request.Body);
                 var body = await reader.ReadToEndAsync();
+
+                var request = JsonSerializer.Deserialize<PluklisteActionRequest>(body);
+
+                int index = request?.index ?? 0;
+                string action = request?.action ?? "";
+
+                var files = Directory.EnumerateFiles("export", "*.JSON")
+                    .Select(f => f.Replace("export\\", ""))
+                    .ToList();
+
+                if (action == "naeste" && index < files.Count - 1)
+                    index++;
+                else if (action == "forrige" && index > 0)
+                    index--;
+
+                var html = WebLagerSystem.ConsoleToHTMLPluklist.PluklisteManager(index);
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync(html);
+            });
+
+            app.MapPost("/plukliste/afslut", async (HttpContext context) =>
+            {
+                using var reader = new StreamReader(context.Request.Body);
+                var body = await reader.ReadToEndAsync();
+                var request = JsonSerializer.Deserialize<PluklisteActionRequest>(body);
+
+                int index = request?.index ?? 0;
+
+                var exportDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "export");
+                var importDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "import");
+                var printDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "print");
+
+                var files = Directory.EnumerateFiles(exportDir, "*.JSON")
+                    .Select(f => Path.GetFileName(f))
+                    .ToList();
+
+                if (index < 0 || index >= files.Count)
+                {
+                    context.Response.StatusCode = 400;
+                    await context.Response.WriteAsync("Invalid index");
+                    return;
+                }
+
+                // Get the filename without the path
+                string fileName = files[index];
+                string sourceFile = Path.Combine(exportDir, fileName);
+                string destFile = Path.Combine(importDir, fileName);
+
+                // Load the Pluklist from the JSON file (so you can generate the HTML if needed)
+                Pluklist? plukliste = null;
+                try
+                {
+                    using var fileStream = File.OpenRead(sourceFile);
+                    plukliste = await JsonSerializer.DeserializeAsync<Pluklist>(fileStream);
+                }
+                catch
+                {
+                    // Handle error if needed
+                }
+
+                // Generate HTML file as per your original console logic, if plukliste is available
+                if (plukliste != null)
+                {
+                    string html = HTMLReader.ReplaceTagsInHTML(plukliste, "templateType"); // adjust 'templateType' if needed
+                    string htmlFileName = Path.ChangeExtension(fileName, ".HTML");
+
+                    if (!Directory.Exists(printDir))
+                        Directory.CreateDirectory(printDir);
+
+                    var htmlFilePath = Path.Combine(printDir, htmlFileName);
+
+                    await File.WriteAllTextAsync(htmlFilePath, html);
+                }
+
+                // Move the JSON file to import folder (delete if exists)
+                if (File.Exists(destFile))
+                    File.Delete(destFile);
+
+                File.Move(sourceFile, destFile);
+
+                // Update the files list after moving
+                files = Directory.EnumerateFiles(exportDir, "*.JSON")
+                    .Select(f => Path.GetFileName(f))
+                    .ToList();
+
+                // Adjust index if necessary
+                if (index >= files.Count)
+                    index = files.Count - 1;
+
+                // Return new plukliste manager HTML or a message if none left
+                string htmlResult;
+
+                if (files.Count == 0)
+                {
+                    htmlResult = "<div>Ingen pluklister fundet.</div>";
+                }
+                else
+                {
+                    htmlResult = WebLagerSystem.ConsoleToHTMLPluklist.PluklisteManager(index);
+                }
+
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync(htmlResult);
+
 
                 // Parse the incoming JSON
                 var plukData = JsonSerializer.Deserialize<PluklisteRequest>(body);
@@ -272,26 +404,27 @@ namespace WebLagerSystem
                 await productList.SaveAsync(); // Always save to file
 
                 return Results.Json(new { success = true });
+
             });
 
             app.Run();
         }
 
-        // In PluklisteWebSystem.cs
-        public static string PluklisteCreate()
+        public class PluklisteActionRequest
         {
-            // return your HTML string here
-            return "<div>Plukliste content</div>";
+            public int index { get; set; }
+            public string action { get; set; }
         }
 
-    }  
+    }
 
     public class ProductList
     {
         private List<Plukliste.Item> products;
         private readonly string jsonPath;
 
-        public ProductList() {
+        public ProductList()
+        {
             jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "products.json");
             Reload();
         }
@@ -325,6 +458,12 @@ namespace WebLagerSystem
         }
     }
 
+
+    public class PluklisteActionRequest
+    {
+        public int index { get; set; }
+        public string action { get; set; }
+
     // Helper class for deserialization
     public class PluklisteRequest
     {
@@ -332,5 +471,6 @@ namespace WebLagerSystem
         public string Forsendelse { get; set; }
         public string Adresse { get; set; }
         public List<string> Lines { get; set; }
+
     }
 }
