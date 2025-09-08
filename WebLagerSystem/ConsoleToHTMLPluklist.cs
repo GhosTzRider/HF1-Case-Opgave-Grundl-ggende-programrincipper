@@ -60,9 +60,43 @@ namespace WebLagerSystem
                     <button class=""button is-success"" data-action=""forrige"">Forrige Plukseddel</button>
                     <button class=""button is-info"" data-action=""genindlaes"">Genindl&aeligs Pluksedler</button>
                 </div>  
-<script>
+        <script>
+        function attachPluklisteBoxListener() {{
+  const box = document.getElementById('plukliste-box');
+  if (!box) return;
 
-</script>
+  box.addEventListener('click', function (e) {{
+    const action = e.target.getAttribute('data-action');
+    if (action === 'naeste' || action === 'forrige' || action === 'afslut') {{
+      let index = parseInt(box.getAttribute('data-index')) || 0;
+
+      // Choose URL based on action
+      let url = '/plukliste/action';
+     if (action === 'afslut') {{
+  url = '/plukliste/afslut';
+      }}
+
+      fetch(url, {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{ action, index }})
+      }})
+      .then(response => response.text())
+      .then(html => {{
+  document.getElementById('plukliste-manager-content').innerHTML = html;
+  
+
+        // Re-attach listeners
+        attachPluklisteBoxListener();
+      }});
+    }}
+  }});
+}}
+
+document.addEventListener('DOMContentLoaded', () => {{
+  attachPluklisteBoxListener();
+}});
+        </script>
                
             ";
 

@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Plukliste
 {
-    internal partial class HTMLReader
+    public partial class HTMLReader
     {
        
         public static string ReplaceTagsInHTML(Pluklist plukliste, string templateType)
