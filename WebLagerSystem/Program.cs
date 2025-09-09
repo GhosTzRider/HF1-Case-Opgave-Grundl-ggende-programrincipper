@@ -20,6 +20,7 @@ namespace WebLagerSystem
 
             var app = builder.Build();
             var productList = new ProductList();
+            PluklisteWebSystem.ProductListInstance = productList;
 
             app.MapGet("/", () =>
             {
@@ -73,7 +74,8 @@ namespace WebLagerSystem
                                         {tableRows}
                                     </tbody>
                                 </table>
-                                <button class=""button is-primary "">Add Products</button>
+                                <button class=""js-modal-trigger button is-primary"" data-target=""modal-js-example"">Tilf&oslashj Produkt</button>
+                                {AddProduct.GetHtml()}
                             </div>
                         </div>
                     </div>
@@ -223,6 +225,78 @@ namespace WebLagerSystem
                 if (idx < 0 || idx >= products.Count) return Results.Json(new { success = false });
 
                 products.RemoveAt(idx);
+
+                await productList.SaveAsync(); // Always save to file
+
+                return Results.Json(new { success = true });
+            });
+            app.MapPost("/api/plukliste", async (HttpContext context) =>
+            {
+                using var reader = new StreamReader(context.Request.Body);
+                var body = await reader.ReadToEndAsync();
+
+                // Parse the incoming JSON
+                var plukData = JsonSerializer.Deserialize<PluklisteRequest>(body);
+
+                if (plukData == null || string.IsNullOrWhiteSpace(plukData.Name))
+                    return Results.Json(new { success = false, error = "Missing name" });
+
+                // Build the export object
+                var exportObj = new
+                {
+                    Name = plukData.Name,
+                    Forsendelse = plukData.Forsendelse,
+                    Adresse = plukData.Adresse,
+                    Lines = plukData.Lines.Select(line =>
+                    {
+                        var item = PluklisteWebSystem.ProductListInstance?.Products()
+                            .FirstOrDefault(p => p.Title == line || p.ProductID == line);
+
+                        return new
+                        {
+                            ProductID = item?.ProductID ?? "",
+                            Title = item?.Title ?? line,
+                            Type = item?.Type.ToString() ?? "",
+                            Amount = item?.Amount ?? 1
+                        };
+                    }).ToList()
+                };
+
+                // Write to export folder in bin/debug (runtime)
+                var exportDirRuntime = Path.Combine(AppContext.BaseDirectory, "export");
+                Directory.CreateDirectory(exportDirRuntime);
+                var fileName = $"{plukData.Name}_products.json";
+                var filePathRuntime = Path.Combine(exportDirRuntime, fileName);
+
+                // Write to export folder in project source (WebLagerSystem/export)
+                var projectDir = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent;
+                var exportDirProject = Path.Combine(projectDir?.FullName ?? "", "export");
+                Directory.CreateDirectory(exportDirProject);
+                var filePathProject = Path.Combine(exportDirProject, fileName);
+
+                var json = JsonSerializer.Serialize(exportObj, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(filePathRuntime, json);
+                await File.WriteAllTextAsync(filePathProject, json);
+
+                return Results.Json(new { success = true });
+            });
+
+            app.MapPost("/add", async (HttpRequest request) =>
+            {
+                productList.Reload(); // Always reload from file
+                var form = await request.ReadFormAsync();
+
+                var id = form["id"].ToString();
+                var name = form["name"].ToString();
+                if (!int.TryParse(form["quantity"], out int quantity)) return Results.Json(new { success = false });
+
+                // Assuming Product class has Id, Title, Amount
+                productList.Products().Add(new Plukliste.Item
+                {
+                    ProductID = id,
+                    Title = name,
+                    Amount = quantity
+                });
 
                 await productList.SaveAsync(); // Always save to file
 
@@ -391,5 +465,13 @@ namespace WebLagerSystem
     {
         public int index { get; set; }
         public string action { get; set; }
+    }
+
+    public class PluklisteRequest
+    {
+        public string Name { get; set; }
+        public string Forsendelse { get; set; }
+        public string Adresse { get; set; }
+        public List<string> Lines { get; set; }
     }
 }
